@@ -11,7 +11,7 @@ const { SnapshotInterpolation } = require('@geckos.io/snapshot-interpolation')
 const SI = new SnapshotInterpolation()
 const Phaser = require('phaser')
 
-class Dude extends Phaser.Physics.Arcade.Sprite {
+class Avatar extends Phaser.Physics.Arcade.Sprite {
   constructor(scene, x, y) {
     super(scene, x, y, '')
 
@@ -35,30 +35,30 @@ class ServerScene extends Phaser.Scene {
 
     io.on('connection', socket => {
       const x = Math.random() * 1200 + 40
-      const dude = new Dude(this, x, 200)
+      const avatar = new Avatar(this, x, 200)
 
       this.players.set(socket.id, {
         socket,
-        dude
+        avatar
       })
 
       socket.on('movement', movement => {
         const { left, right, up, down } = movement
         const speed = 160
-        const jump = 330
 
-        if (left) dude.setVelocityX(-speed)
-        else if (right) dude.setVelocityX(speed)
-        else dude.setVelocityX(0)
+        if (left) avatar.setVelocityX(-speed)
+        else if (right) avatar.setVelocityX(speed)
+        else avatar.setVelocityX(0)
 
-        if (up)
-          if (dude.body.touching.down || dude.body.onFloor())
-            dude.setVelocityY(-jump)
+        if (up) avatar.setVelocityY(-speed)
+        else if (down) avatar.setVelocityY(speed)
+        else avatar.setVelocityY(0)
+
       })
 
       socket.on('disconnect', reason => {
         const player = this.players.get(socket.id)
-        player.dude.destroy()
+        player.avatar.destroy()
         this.players.delete(socket.id)
       })
     })
@@ -70,16 +70,16 @@ class ServerScene extends Phaser.Scene {
     // only send the update to the client at 30 FPS (save bandwidth)
     if (this.tick % 2 !== 0) return
 
-    // get an array of all dudes
-    const dudes = []
+    // get an array of all avatars
+    const avatars = []
     this.players.forEach(player => {
-      const { socket, dude } = player
-      dudes.push({ id: socket.id, x: dude.x, y: dude.y })
+      const { socket, avatar } = player
+      avatars.push({ id: socket.id, x: avatar.x, y: avatar.y })
     })
 
-    const snapshot = SI.snapshot.create(dudes)
+    const snapshot = SI.snapshot.create(avatars)
 
-    // send all dudes to all players
+    // send all avatars to all players
     this.players.forEach(player => {
       const { socket } = player
       socket.emit('snapshot', snapshot)
@@ -89,7 +89,7 @@ class ServerScene extends Phaser.Scene {
 
 const config = {
   type: Phaser.HEADLESS,
-  width: 1280,
+  width: 960,
   height: 720,
   banner: false,
   audio: false,
@@ -97,7 +97,7 @@ const config = {
   physics: {
     default: 'arcade',
     arcade: {
-      gravity: { y: 500 }
+      gravity: { y: 0 }
     }
   }
 }

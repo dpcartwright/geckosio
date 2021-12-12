@@ -15,16 +15,31 @@ class MainScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.atlas('alchemist', 'assets/alchemist.png', 'assets/alchemist_atlas.json');
-    this.load.animation('alchemist_anim', 'assets/alchemist_anim.json');
+    this.load.image('grass_tiles', 'assets/TX Tileset Grass-extruded.png')
+    this.load.image('stoneground_tiles', 'assets/TX Tileset Stone Ground-extruded.png')
+    this.load.image('wall_tiles', 'assets/TX Tileset Wall-extruded.png')
+    this.load.tilemapTiledJSON('tilemap', 'assets/map.json')
+
+    this.load.atlas('alchemist', 'assets/alchemist.png', 'assets/alchemist_atlas.json')
+    this.load.animation('alchemist_anim', 'assets/alchemist_anim.json')
   }
 
   create() {
     this.cursors = this.input.keyboard.createCursorKeys()
+    const map = this.make.tilemap({ key: 'tilemap' })
+    const grassTiles = map.addTilesetImage('grass_tiles', 'grass_tiles', 32, 32, 1, 2)
+    const stonegroundTiles = map.addTilesetImage('stoneground_tiles', 'stoneground_tiles', 32, 32, 1, 2)
+    const wallTiles = map.addTilesetImage('wall_tiles', 'wall_tiles', 32, 32, 1, 2)
+    const allTiles = [grassTiles, stonegroundTiles, wallTiles]
+    const groundLayer = map.createStaticLayer('Ground', allTiles)
+    const buildingLayer = map.createStaticLayer('Buildings', allTiles)
+    buildingLayer.setCollisionByProperty({ collides: true })
 
     this.socket.on('snapshot', snapshot => {
       SI.snapshot.add(snapshot)
     })
+    
+    this.input.mouse.disableContextMenu();
   }
 
   update() {

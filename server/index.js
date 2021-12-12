@@ -11,6 +11,9 @@ const { SnapshotInterpolation } = require('@geckos.io/snapshot-interpolation')
 const SI = new SnapshotInterpolation()
 const Phaser = require('phaser')
 
+// imports for assets
+const tilemap = require('../client/assets/map.json')
+
 class Avatar extends Phaser.Physics.Arcade.Sprite {
   constructor(scene, x, y) {
     super(scene, x, y, '')
@@ -30,8 +33,21 @@ class ServerScene extends Phaser.Scene {
     this.players = new Map()
   }
 
+  preload() {
+    this.load.tilemapTiledJSON('tilemap', tilemap);
+  }
+
   create() {
     this.physics.world.setBounds(0, 0, 1280, 720)
+
+    const map = this.make.tilemap({ key: 'tilemap' })
+    const grassTiles = map.addTilesetImage('grass_tiles', 'grass_tiles', 32, 32, 1, 2)
+    const stonegroundTiles = map.addTilesetImage('stoneground_tiles', 'stoneground_tiles', 32, 32, 1, 2)
+    const wallTiles = map.addTilesetImage('wall_tiles', 'wall_tiles', 32, 32, 1, 2)
+    const allTiles = [grassTiles, stonegroundTiles, wallTiles]
+    const groundLayer = map.createStaticLayer('Ground', allTiles)
+    const buildingLayer = map.createStaticLayer('Buildings', allTiles)
+    buildingLayer.setCollisionByProperty({ collides: true })
 
     io.on('connection', socket => {
       const x = Math.random() * 1200 + 40

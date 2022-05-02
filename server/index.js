@@ -4,6 +4,7 @@ const app = express()
 const server = require('http').createServer(app)
 const io = require('socket.io')(server)
 const path = require('path')
+const fs = require('fs')
 
 // imports for  phaser
 require('@geckos.io/phaser-on-nodejs')
@@ -12,7 +13,7 @@ const SI = new SnapshotInterpolation()
 const Phaser = require('phaser')
 
 // imports for assets
-const tilemap = require('../client/assets/map.json')
+const tilemap = JSON.parse(fs.readFileSync('client/assets/map.json', 'utf8'));
 
 class Avatar extends Phaser.Physics.Arcade.Sprite {
   constructor(scene, x, y) {
@@ -41,10 +42,7 @@ class ServerScene extends Phaser.Scene {
     this.physics.world.setBounds(0, 0, 1280, 720)
 
     const map = this.make.tilemap({ key: 'tilemap' })
-    const grassTiles = map.addTilesetImage('grass_tiles', 'grass_tiles', 32, 32, 1, 2)
-    const stonegroundTiles = map.addTilesetImage('stoneground_tiles', 'stoneground_tiles', 32, 32, 1, 2)
-    const wallTiles = map.addTilesetImage('wall_tiles', 'wall_tiles', 32, 32, 1, 2)
-    const allTiles = [grassTiles, stonegroundTiles, wallTiles]
+    const allTiles = []
     const groundLayer = map.createStaticLayer('Ground', allTiles)
     const buildingLayer = map.createStaticLayer('Buildings', allTiles)
     buildingLayer.setCollisionByProperty({ collides: true })

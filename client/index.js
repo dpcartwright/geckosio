@@ -15,13 +15,13 @@ class MainScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image('grass_tiles', 'assets/TX Tileset Grass-extruded.png')
-    this.load.image('stoneground_tiles', 'assets/TX Tileset Stone Ground-extruded.png')
-    this.load.image('wall_tiles', 'assets/TX Tileset Wall-extruded.png')
-    this.load.tilemapTiledJSON('tilemap', 'assets/map.json')
+    this.load.image('grass_tiles', '../assets/TX Tileset Grass-extruded.png')
+    this.load.image('stoneground_tiles', '../assets/TX Tileset Stone Ground-extruded.png')
+    this.load.image('wall_tiles', '../assets/TX Tileset Wall-extruded.png')
+    this.load.tilemapTiledJSON('tilemap', '../assets/map.json')
 
-    this.load.atlas('alchemist', 'assets/alchemist.png', 'assets/alchemist_atlas.json')
-    this.load.animation('alchemist_anim', 'assets/alchemist_anim.json')
+    this.load.atlas('alchemist', '../assets/alchemist.png', '../assets/alchemist_atlas.json')
+    this.load.animation('alchemist_anim', '../assets/alchemist_anim.json')
   }
 
   create() {

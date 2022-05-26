@@ -1,4 +1,8 @@
-# Phaser on Node.js example
+# Template Geckosio
+
+Has working phaser on node (with arcade physics), snapshot interpolation, client-side prediction and server reconciliation.
+
+Also includes some sprites and files from previous tutorials.
 
 Using:
 

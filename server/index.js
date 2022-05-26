@@ -43,8 +43,8 @@ class ServerScene extends Phaser.Scene {
 
     const map = this.make.tilemap({ key: 'tilemap' })
     const allTiles = []
-    const groundLayer = map.createStaticLayer('Ground', allTiles)
-    const buildingLayer = map.createStaticLayer('Buildings', allTiles)
+    const groundLayer = map.createLayer('Ground', allTiles)
+    const buildingLayer = map.createLayer('Buildings', allTiles)
     buildingLayer.setCollisionByProperty({ collides: true })
 
     io.on('connection', socket => {
@@ -82,7 +82,7 @@ class ServerScene extends Phaser.Scene {
     this.tick++
 
     // only send the update to the client at 30 FPS (save bandwidth)
-    if (this.tick % 2 !== 0) return
+    if (this.tick % 4 !== 0) return
 
     // get an array of all avatars
     const avatars = []
@@ -92,6 +92,7 @@ class ServerScene extends Phaser.Scene {
     })
 
     const snapshot = SI.snapshot.create(avatars)
+    SI.vault.add(snapshot)
 
     // send all avatars to all players
     this.players.forEach(player => {
